@@ -10,18 +10,6 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 
-LAST_RUN_FILE = "last_run.txt"
-
-def get_last_run_timestamp():
-    if os.path.exists(LAST_RUN_FILE):
-        with open(LAST_RUN_FILE, "r") as f:
-            return float(f.read().strip())
-    return (datetime.now(timezone.utc) - timedelta(hours=1)).timestamp()
-
-def update_last_run_timestamp():
-    with open(LAST_RUN_FILE, "w") as f:
-        f.write(str(datetime.now(timezone.utc).timestamp()))
-
 class DiscordWebhook:
     def __init__(self):
         self.webhookURL = os.getenv("WEBHOOK_URL")
@@ -50,7 +38,7 @@ class DiscordWebhook:
             logging.error(f"Request exception sending '{title}': {e}")
             return None
 
-cutoff_time = get_last_run_timestamp()
+cutoff_time = (datetime.now(timezone.utc) - timedelta(hours=1.5)).timestamp()
 stk = []
 webhook = DiscordWebhook()
 
@@ -77,5 +65,3 @@ while stk:
         webhook.sendToDiscord(post.title, post.url, f"https://reddit.com{post.permalink}")
     else:
         webhook.sendToDiscord(f"{post.title}\n{post.url}", "", f"https://reddit.com{post.permalink}")
-
-update_last_run_timestamp()
