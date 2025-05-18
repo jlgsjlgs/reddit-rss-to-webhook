@@ -1,4 +1,4 @@
-# reddit-rss-to-webhook
+# reddit-to-webhook
 
 A lightweight Python script that monitors a specific subreddit for new posts and sends them to a Discord webhook. Ideal for creating subreddit-based RSS feeds in Discord channels.
 
