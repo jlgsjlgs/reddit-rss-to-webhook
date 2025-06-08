@@ -2,7 +2,7 @@ name: reddit-to-webhook script
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # Runs once every day
+    - cron: '0 * * * *'  # Runs once every day
   workflow_dispatch:
 
 jobs:
