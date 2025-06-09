@@ -24,6 +24,8 @@ class Discord:
         headers = {"Content-Type": "application/json"}
         data = {
             "content": "**{}**\n\n{}".format(title, url),
+            "username": "HSR Leaks",
+            "avatar_url": "https://static.wikia.nocookie.net/houkai-star-rail/images/4/44/Sticker_PPG_13_Acheron_03.png/revision/latest/scale-to-width-down/250?cb=20240802015945"
         }
 
         try:
