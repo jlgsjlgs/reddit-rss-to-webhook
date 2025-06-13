@@ -67,7 +67,7 @@ class Database:
     
     def updateTime(self, new_time=None):
         if not new_time:
-            logging.info("No new posts. Timestamp not updated.")
+            logging.info("No new posts - Timestamp not updated.")
             return
     
         try:
@@ -106,7 +106,6 @@ class Reddit:
                 break
         
         if not stk:
-            logging.info("No new posts")
             return None
         
         while stk:
