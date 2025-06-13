@@ -65,12 +65,15 @@ class Database:
             logging.error(f"Error getting timestamp from Firebase {e}")
             raise
     
-    def updateTime(self):
+    def updateTime(self, new_time=None):
+        if not new_time:
+            logging.info("No new posts. Timestamp not updated.")
+            return
+    
         try:
-            current_time = datetime.now(timezone.utc)
             doc_ref = self.db.collection("timestamp").document("last_read")
-            doc_ref.set({"time": current_time})
-            logging.info("Updated timestamp in Firestore")
+            doc_ref.set({"time": new_time})
+            logging.info(f"Updated timestamp in Firestore: {new_time.isoformat()}")
         except Exception as e:
             logging.error(f"Error updating timestamp in Firebase: {e}")
             raise
@@ -92,25 +95,31 @@ class Reddit:
     def checkPosts(self, last_checked_timestamp):
         stk = []
         subreddit = self.connection.subreddit("HonkaiStarRail_leaks")
+        latest = None
 
         for submission in subreddit.new():
-            if submission.created_utc >= last_checked_timestamp:
+            if submission.created_utc > last_checked_timestamp:
                 stk.append(submission)
+                if not latest or submission.created_utc > latest:
+                    latest = submission.created_utc
             else:
                 break
         
         if not stk:
             logging.info("No new posts")
+            return None
         
         while stk:
             post = stk.pop()
             self.discord.send(post.title, post.url)
 
+        return datetime.fromtimestamp(latest, tz=timezone.utc)
+
 if __name__ == "__main__":
     fb = Database()
     rdt = Reddit()
 
-    rdt.checkPosts(fb.getTime())
-    fb.updateTime()
+    time = rdt.checkPosts(fb.getTime())
+    fb.updateTime(time)
 
     logging.info("Script execution completed")
